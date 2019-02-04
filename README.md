@@ -1,5 +1,8 @@
 # links
 
+## Closuers
+
+https://stackoverflow.com/questions/111102/how-do-javascript-closures-work?rq=1
 
 ## Context
 http://ryanmorr.com/understanding-scope-and-context-in-javascript/
