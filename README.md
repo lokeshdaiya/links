@@ -1,8 +1,14 @@
 # links
 
 
-
+## Context
 http://ryanmorr.com/understanding-scope-and-context-in-javascript/
+
+## Let and Var
+
+https://stackoverflow.com/questions/762011/whats-the-difference-between-using-let-and-var-to-declare-a-variable-in-jav?rq=1
+
+
 
 
 
