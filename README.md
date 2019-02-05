@@ -16,7 +16,9 @@ https://stackoverflow.com/questions/762011/whats-the-difference-between-using-le
 ## Interview links
 
 https://www.thatjsdude.com/interview/js2.html
+
 https://github.com/ganqqwerty/123-Essential-JavaScript-Interview-Questions
+
 https://medium.com/dev-bits/a-perfect-guide-for-cracking-a-javascript-interview-a-developers-perspective-23a5c0fa4d0d
 
 
