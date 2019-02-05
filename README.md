@@ -11,7 +11,10 @@ http://ryanmorr.com/understanding-scope-and-context-in-javascript/
 
 https://stackoverflow.com/questions/762011/whats-the-difference-between-using-let-and-var-to-declare-a-variable-in-jav?rq=1
 
+## Event Loop
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop
 
+https://medium.com/front-end-weekly/javascript-event-loop-explained-4cd26af121d4
 
 ## Interview links
 
