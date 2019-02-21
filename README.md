@@ -33,3 +33,10 @@ https://medium.com/dev-bits/a-perfect-guide-for-cracking-a-javascript-interview-
 --Next
    http://2ality.com/2013/06/iterators-generators.html
    http://speakingjs.com/es5/ch17.html#_pitfalls_using_an_object_as_a_map
+   
+   ## angular chat bot examples
+   https://angularfirebase.com/lessons/chatbot-in-angular-with-dialogflow-api-ai/
+   
+   https://www.labsexplorer.com/news/create-a-simple-angular-chatbot-with-google-dialogflow_494
+   
+   
