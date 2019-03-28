@@ -40,3 +40,15 @@ https://medium.com/dev-bits/a-perfect-guide-for-cracking-a-javascript-interview-
    https://www.labsexplorer.com/news/create-a-simple-angular-chatbot-with-google-dialogflow_494
    
    
+   # Angular
+   https://dev.to/avatsaev/simple-state-management-in-angular-with-only-services-and-rxjs-41p8?utm_sour…
+
+https://dormoshe.io/daily-news/the-magic-of-typescript-decorators-1449?utm_source=facebook&utm_campa…
+
+
+https://github.com/basarat/typescript-collections/tree/release/examples
+
+https://theinfogrid.com/tech/developers/angular/filter-angular-async-pipe/amp/
+
+   
+   
