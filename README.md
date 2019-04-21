@@ -50,5 +50,15 @@ https://github.com/basarat/typescript-collections/tree/release/examples
 
 https://theinfogrid.com/tech/developers/angular/filter-angular-async-pipe/amp/
 
+## MY Chrome 
+
+https://morioh.com/p/how-to-create-restful-crud-api-with-node-js-mongodb-and-express-js
+
+https://github.com/developerslearnit/ionic3-firebase-shopping-cart
+
+https://theinfogrid.com/tech/developers/angular/filter-angular-async-pipe/amp/
+
+https://easyrtc.com/docs/easyrtc_client_tutorial.php
+
    
    
