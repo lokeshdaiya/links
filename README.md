@@ -50,6 +50,10 @@ https://github.com/basarat/typescript-collections/tree/release/examples
 
 https://theinfogrid.com/tech/developers/angular/filter-angular-async-pipe/amp/
 
+# Angular Elements
+https://medium.com/@sumeet.ru/how-to-create-custom-angular-element-a9e92dac2c13 
+https://blog.angulartraining.com/tutorial-how-to-create-custom-angular-elements-55aea29d80c5
+
 ## MY Chrome 
 
 https://morioh.com/p/how-to-create-restful-crud-api-with-node-js-mongodb-and-express-js
