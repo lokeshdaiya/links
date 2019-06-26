@@ -69,5 +69,8 @@ https://easyrtc.com/docs/easyrtc_client_tutorial.php
 
 https://csform.com/top-10-free-ionic-3-templates/
 https://medium.com/enappd/18-ready-to-use-trending-ionic-react-native-app-templates-65156bb203ea
-   
+
+# css
+
+https://codepad.co/snippet/rotation-in-css3-from-circle-to-square
    
