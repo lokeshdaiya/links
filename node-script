@@ -1,1 +1,639 @@
+'use strict';
+const fs = require('fs');
+const path = require('path');
 
+var FMAP = {
+		'NSN' : 0,
+		'Date': 1,
+		'End Time': 2,
+		'Scheduled Crew Hours' : 3,
+		'Sched Fixed Crew Hours' : 4,
+		'Scheduled Manager Hours' : 5,
+		'Sched Fix Mgr Hours' : 6,
+		'Sched Department Manager Hours' : 7,
+		'Sched Fix Department Mgr Hours' : 8,
+		'Unassigned Time' : 9,
+		'Cash Admin (A)' : 10,
+		'Breakfast Grill (B)' : 11,
+		'Closing (C)' : 12,
+		'Drive Thru (D)' : 13,
+		'Stat/EOW/Pay (E)' : 14,
+		'Floor (F)' : 15,
+		'Grill (G)' : 16,
+		'MDP and 1 on 1 (H)' : 17,
+		'Transition/Pre-close (I)' : 18,
+		'Biscuits (J)' : 19,
+		'Fry/HB (K)' : 20,
+		'Lobby (Fixed) (L)' : 21,
+		'Lobby (Variable) (L)' : 22,
+		'Maintenance (M)' : 23,
+		'Fixed (N)' : 24,
+		'Opening (O)' : 25,
+		'Prod Call (P)/Other (Z)' : 26,
+		'Prev. Maintenance (Q)' : 27,
+		'Delivery (R)' : 28,
+		'Salads (S)' : 29,
+		'Hiring/Training (T)' : 30,
+		'Fixed (U)' : 31,
+		'Vatfilter (V)' : 32,
+		'Window (W)' : 33,
+		'Meetings/Classes (X)' : 34,
+		'Crew Schedule (Y)' : 35,
+		'Meal Break (Fixed) (/)' : 36,
+		'Meal Break (Variable) (/)' : 37
+};
+
+const SchedulingSymbols = {
+	"A" : {
+		"Name": "ADMINISTRATION/CASH",
+		"Variable": false,
+		"ISP": "A",
+		"R2D2": "Cash Admin (A)"
+	},
+	"AS" : {
+		"Variable": true,
+		"Name": "FCAssembler",
+		"ISP": null,
+		"R2D2": null
+	},
+	"BP" : {
+		"Name": "BIRTHDAY PARTIES",
+		"Variable": false,
+		"ISP": "U",
+		"R2D2": "Fixed (U)"
+	},
+	"BS" : {
+		"Name": "BEVERAGE SPECIALIST",
+		"Variable": true,
+		"ISP": "Z",
+		"R2D2": "Prod Call (P)/Other (Z)"
+	},
+	"C" : {
+		"Name": "CLOSING",
+		"Variable": false,
+		"ISP": "C",
+		"R2D2": "Closing (C)"
+	},
+	"D" : {
+		"Name": "DRIVE THRU",
+		"Variable": true,
+		"ISP": "D",
+		"R2D2": "Drive Thru (D)"
+	},
+	"FG" : {
+		"Name": "FLOOR GUEST SERVICE",
+		"Variable": false,
+		"ISP": "F",
+		"R2D2": "Floor (F)"
+	},
+	"FF" : {
+		"Name": "FRENCH FRIES",
+		"Variable": true,
+		"ISP": "K",
+		"R2D2": "Fry/HB (K)"
+	},
+	"FL" : {
+		"Name": "FLOOR",
+		"Variable": false,
+		"ISP": "F",
+		"R2D2": "Floor (F)"
+	},
+	"FP" : {
+		"Name": "FLOOR PRODUCTION",
+		"Variable": false,
+		"ISP": "F",
+		"R2D2": "Floor (F)"
+	},
+	"FS" : {
+		"Name": "FOOD SAFETY",
+		"Variable": false,
+		"ISP": "J",
+		"R2D2": "Biscuits (J)"
+	},
+	"G" : {
+		"Name": "GRILL REGULAR MENU",
+		"Variable": true,
+		"ISP": "G",
+		"R2D2": "Grill (G)"
+	},
+	"GB" : {
+		"Name": "GRILL BREAKFAST MENU",
+		"Variable": true,
+		"ISP": "B",
+		"R2D2": "Breakfast Grill (B)"
+	},
+	"GL" : {
+		"Name": "Guest Experience Leader",
+		"Variable": false,
+		"ISP": "Q",
+		"R2D2": "Prev. Maintenance (Q)"
+	},
+	"H" : {
+		"Name": "HIRING",
+		"Variable": false,
+		"ISP": "T",
+		"R2D2": "Hiring/Training (T)"
+	},
+	"HB" : {
+		"Name": "HASHBROWN",
+		"Variable": true,
+		"ISP": "K",
+		"R2D2": "Fry/HB (K)"
+	},
+	"ID" : {
+		"Name": "INDIVIDUAL DEVELOPMENT",
+		"Variable": false,
+		"ISP": "H",
+		"R2D2": "MDP and 1 on 1 (H)"
+	},
+	"L" : {
+		"Name": "LOBBY",
+		"Variable": false,
+		"ISP": "L",
+		"R2D2": "Lobby (Fixed) (L)"
+	},
+	"M" : {
+		"Name": "MAINTENANCE",
+		"Variable": false,
+		"ISP": "M",
+		"R2D2": "Maintenance (M)"
+	},
+	"MB" : {
+		"Name": "MealBreak",
+		"Variable": false,
+		"ISP": "/",
+		"R2D2": "Meal Break (Fixed) (/)"
+	},
+	"MM" : {
+		"Name": "MANAGER MEETING ",
+		"Variable": false,
+		"ISP": "X",
+		"R2D2": "Meetings/Classes (X)"
+	},
+	"O" : {
+		"Name": "OPENING",
+		"Variable": false,
+		"ISP": "O",
+		"R2D2": "Opening (O)"
+	},
+	"OM" : {
+		"Name": "OATMEAL",
+		"Variable": false,
+		"ISP": "S",
+		"R2D2": "Salads (S)"
+	},
+	"OT" : {
+		"Variable": true,
+		"Name": "FCOrderTaker",
+		"ISP": null,
+		"R2D2": null
+	},
+	"PM" : {
+		"Name": "PLANNED MAINTENANCE",
+		"Variable": false,
+		"ISP": "Q",
+		"R2D2": "Prev. Maintenance (Q)"
+	},
+	"PS" : {
+		"Name": "PRE-SHIFT",
+		"Variable": false,
+		"ISP": "N",
+		"R2D2": "Fixed (N)"
+	},
+	"RB" : {
+		"Name": "RestBreak",
+		"Variable": false,
+		"ISP": "/",
+		"R2D2": "Meal Break (Fixed) (/)"
+	},
+	"S" : {
+		"Name": "SUPPORT / PREP",
+		"Variable": false,
+		"ISP": "S",
+		"R2D2": "Salads (S)"
+	},
+	"SC" : {
+		"Name": "SCHEDULES",
+		"Variable": false,
+		"ISP": "Y",
+		"R2D2": "Crew Schedule (Y)"
+	},
+	"ST" : {
+		"Name": "STAT",
+		"Variable": false,
+		"ISP": "E",
+		"R2D2": "Stat/EOW/Pay (E)"
+	},
+	"T" : {
+		"Name": "TRAINING",
+		"Variable": false,
+		"ISP": "T",
+		"R2D2": "Hiring/Training (T)"
+	},
+	"TD" : {
+		"Name": "TRUCK DELIVERY",
+		"Variable": false,
+		"ISP": "R",
+		"R2D2": "Delivery (R)"
+	},
+	"TP" : {
+		"Name": "OTP",
+		"Variable": false,
+		"ISP": "F",
+		"R2D2": "Floor (F)"
+	},
+	"TR" : {
+		"Name": "TRANSITION",
+		"Variable": false,
+		"ISP": "I",
+		"R2D2": "Transition/Pre-close (I)"
+	},
+	"TS" : {
+		"Variable": true,
+		"Name": "TableService",
+		"ISP": null,
+		"R2D2": null
+	},
+	"V" : {
+		"Name": "VAT",
+		"Variable": false,
+		"ISP": "V",
+		"R2D2": "Vatfilter (V)"
+	},
+	"W" : {
+		"Name": "WINDOW",
+		"Variable": true,
+		"ISP": "W",
+		"R2D2": "Window (W)"
+	},
+	"WT" : {
+		"Name": "WALK THRUS",
+		"Variable": false,
+		"ISP": "X",
+		"R2D2": "Meetings/Classes (X)"
+	}
+};
+
+// convert HH:MM to 15-minutes counts
+function HHMM2CNT(hhmm) {
+	var a = hhmm.split(':');
+	return (+a[0]) * 4 + ~~((+a[1]+7)/15);
+}
+// convert 15-minutes counts to HH:MM 
+function CNT2HHMM(cnt) {
+	return ('0' + ~~(cnt/4)).slice(-2) + ':' + ('0' + (cnt%4)*15).slice(-2);
+}
+
+function comparer(a, b) {
+	return (a || b) ? (!a ? -1 : !b ? 1 : (a < b ? -1 : (a > b ? 1 : 0))) : 0;
+}
+function compareSchSym(a, b) {
+	//  sort breaks to the bottom
+	if (a == "MB" || a == "RB") a = "ZZZ" + a;
+	if (b == "MB" || b == "RB") b = "ZZZ" + b;
+	return (a < b ? -1 : (a > b ? 1 : 0));
+}
+
+var RAW = false;
+const qt = '"';
+const EOL = '\n';
+const delim = ',';
+const DMJTC = ["00045","00541","00644","00645","00845","00846","00847","02152","02193","10001","10002","20107"];
+const MaxIdx = 96;
+const TermGEID = "999999999999999999";
+function parse_Schedule(fnsn, jdata, map, ws) {
+	if (!Array.isArray(jdata)) {
+		return('Invalid JSON format');
+	}
+	var fieldmap = map;
+	var fields = Object.keys(fieldmap);
+	var numfields = fields.length;
+
+	for (let schedule of jdata) {
+		if (schedule.Status != "Posted" && schedule.Status != "Approved") {
+			console.log(fnsn + ': Skipping schedule for ' + schedule.ScheduleStartDate + (schedule.Status == 'Saved' ? ' with' : ': Invalid') + ' status: ' + schedule.Status);
+			continue;
+		}
+		let SchStIdx = HHMM2CNT(schedule.LaborStartOfDay || "04:00");
+		for (let day of schedule.Schedule) {
+			let lbdt = day.Value[0].ScheduleDate;
+			if (!lbdt) continue;
+			let laborDate = qt + lbdt.substr(4,2) + '/' + lbdt.substr(6,2) + '/' + lbdt.substr(0,4) + qt;
+			console.log(fnsn + ': Processing Schedule date ' + lbdt);
+			// Each day covers 24-hour period, 96 quarter hours,
+			// starting with LaborStartOfDay.
+			// So we need array of 96 rows, each row holds schedule measures
+			let rows = new Array(MaxIdx);
+			for (let i=0; i<MaxIdx; i++) {
+				rows[i] = new Array(numfields).fill(0);
+				rows[i][0] = fnsn;
+				rows[i][1] = laborDate;
+				// format qtr end time (this why +1)
+				rows[i][2] = qt + CNT2HHMM(i+SchStIdx+1) + qt;
+			}
+			if (!day.hasOwnProperty('Shifts') || !Array.isArray(day.Shifts)) {
+				console.log(fnsn + ':' + lbdt + ':ERROR: has no Shifts: ' + JSON.stringify(day));
+				continue;
+			}
+			// Add fake shift to trigger GEID change after the last real shift	
+			day.Shifts.push({"GEID":TermGEID,"Symbols":[]});
+
+			let LastPerson = null;
+
+			// sort by GEID and by start time.  Apparently there may be
+			// multiple records for the same GEID
+			for (let person of day.Shifts.sort(function(a,b){
+					if (!a.hasOwnProperty('StartIdx') && a.hasOwnProperty('StartTime')) {
+						a.StartIdx = HHMM2CNT(a.StartTime) - SchStIdx;
+						if (a.StartIdx < 0) a.StartIdx += MaxIdx;
+					}
+					if (!b.hasOwnProperty('StartIdx') && b.hasOwnProperty('StartTime')) {
+						b.StartIdx = HHMM2CNT(b.StartTime) - SchStIdx;
+						if (b.StartIdx < 0) b.StartIdx += MaxIdx;
+					}
+					return comparer(a.GEID, b.GEID) || comparer(a.JobTitleCode, b.JobTitleCode) || comparer(a.StartIdx, b.StartIdx);
+				}))
+			{
+				// console.log(fnsn + ': ' + JSON.stringify(person));
+				if (!person.hasOwnProperty('Symbols') || !Array.isArray(person.Symbols)) {
+					console.log(fnsn + ':' + lbdt + ':ERROR: has no Symbols: ' + JSON.stringify(person));
+					continue;
+				}
+				if (LastPerson == null) {
+					// first record, just save (just a reference, shallow copy)
+					LastPerson = person;
+					continue;
+				}
+				if (comparer(LastPerson.GEID, person.GEID) == 0 && comparer(LastPerson.JobTitleCode, person.JobTitleCode) == 0) {
+					// the same (or no) GEID - just accumulate Symbols
+					Array.prototype.push.apply(LastPerson.Symbols, person.Symbols);
+					continue;
+				}
+				// if we are here, we have a new GEID, so we need to process
+				// LastPerson.Symbols and then copy current person to LastPerson
+				let etype = null;
+				if (!LastPerson.hasOwnProperty('GEID') || !LastPerson.hasOwnProperty('JTCType')) {
+					etype = 'U';
+				}
+				else if (LastPerson.JTCType == "Crew") {
+					etype = 'C';
+				}
+				else if (LastPerson.JTCType == "Manager") {
+					etype = 'M';
+					if (LastPerson.JobTitleCode && DMJTC.indexOf(LastPerson.JobTitleCode) >= 0)
+						etype = 'DM';
+				}
+				else {
+					console.log(fnsn + ': ERROR: Invalid JTCType: ' + JSON.stringify(LastPerson));
+					// assume crew for now
+					etype = 'C';
+				}
+
+				let LastVar = false;
+				let LastShift = null;
+				let LastGEID = LastPerson.GEID || 'NOGEID';
+				let measures = [];
+				// sort in order of start time using Start index.
+				// Save Start index in the object for reuse
+				for (let symshft of LastPerson.Symbols.sort(function(a,b){
+						if (!a.hasOwnProperty('StartIdx') && a.hasOwnProperty('StartTime')) {
+							a.StartIdx = HHMM2CNT(a.StartTime) - SchStIdx;
+							if (a.StartIdx < 0) a.StartIdx += MaxIdx;
+						}
+						if (!b.hasOwnProperty('StartIdx') && b.hasOwnProperty('StartTime')) {
+							b.StartIdx = HHMM2CNT(b.StartTime) - SchStIdx;
+							if (b.StartIdx < 0) b.StartIdx += MaxIdx;
+						}
+						return comparer(a.StartIdx, b.StartIdx) || compareSchSym(a.SchedulingSymbol, b.SchedulingSymbol);
+					}))
+				{
+					// console.log(fnsn + ': ' + JSON.stringify(symshft));
+					let schedSym = symshft.SchedulingSymbol;
+					if (!SchedulingSymbols.hasOwnProperty(schedSym)) {
+						console.log(fnsn + ':' + lbdt + ':' + LastGEID + ': ERROR: Invalid Sched Symbol ' + schedSym);
+						continue;
+					}
+					if (!RAW && (!SchedulingSymbols[schedSym].R2D2 || !fieldmap.hasOwnProperty(SchedulingSymbols[schedSym].R2D2))) {
+						console.log(fnsn + ':' + lbdt + ':' + LastGEID + ': ERROR: Unmapped Sched Symbol ' + schedSym);
+						continue;
+					}
+					if (!RAW && !fieldmap[SchedulingSymbols[schedSym].R2D2])
+						continue;
+
+					// figure out start/end index
+					// start index may already be there from sorting
+					if (!symshft.hasOwnProperty('StartIdx')) {
+						if (!symshft.hasOwnProperty('StartTime')) {
+							console.log(fnsn + ':' + lbdt + ':' + LastGEID + ': Invalid: no StartTime: ' + JSON.stringify(symshft));
+							continue;
+						}
+						symshft.StartIdx = HHMM2CNT(symshft.StartTime) - SchStIdx;
+						if (symshft.StartIdx < 0) symshft.StartIdx += MaxIdx;
+					}
+					if (!symshft.hasOwnProperty('EndTime')) {
+						console.log(fnsn + ':' + lbdt + ':' + LastGEID + ': Invalid: no EndTime: ' + JSON.stringify(symshft));
+						continue;
+					}
+					symshft.EndIdx = HHMM2CNT(symshft.EndTime) - SchStIdx;
+					if (symshft.EndIdx <= 0) symshft.EndIdx += MaxIdx;
+					if (symshft.StartIdx < 0 || symshft.StartIdx >= MaxIdx ||
+						symshft.EndIdx <= 0 || symshft.EndIdx > MaxIdx ||
+						symshft.StartIdx >= symshft.EndIdx) {
+						console.log(fnsn + ':' + lbdt + ':' + LastGEID + ': Invalid Start/End: ' + JSON.stringify(symshft));
+						continue;
+					}
+					// check for overlap of assigned shifts only
+					if (LastShift && etype != 'U') {
+						if (symshft.StartIdx < LastShift.EndIdx) {
+							if (schedSym != "MB" && schedSym != "RB") {
+								if (LastShift.EndIdx < symshft.EndIdx) {
+									symshft.StartIdx = LastShift.EndIdx;
+									console.log(fnsn + ':' + lbdt + ':' + LastGEID + ': Shift overlaps, ignoring portion: Previous Shift: ' + JSON.stringify(LastShift) + ' Current Shift: ' + JSON.stringify(symshft));
+								}
+								else {
+									console.log(fnsn + ':' + lbdt + ':' + LastGEID + ': Shift completely overlaps, ignoring: Previous Shift: ' + JSON.stringify(LastShift) + ' Current Shift: ' + JSON.stringify(symshft));
+									continue;
+								}
+							}
+							// breaks always overlap, but check their ending
+							else if (symshft.EndIdx > LastShift.EndIdx) {
+								console.log(fnsn + ':' + lbdt + ':' + LastGEID + ': Break extends beyond shift, ignoring extension: Previous Shift: ' + JSON.stringify(LastShift) + ' Current Shift: ' + JSON.stringify(symshft));
+								// ignore the part that extends beyond shift
+								symshft.EndIdx = LastShift.EndIdx
+							}
+						}
+						else if (schedSym == "MB" || schedSym == "RB") {
+							console.log(fnsn + ':' + lbdt + ':' + LastGEID + ': Non-overlapping break: ' + JSON.stringify(LastPerson));
+						}
+					}
+					else if (schedSym == "MB" || schedSym == "RB") {
+						// Ignore breaks for unassigned shifts and
+						// breaks that don't overlap
+						console.log(fnsn + ':' + lbdt + ':' + LastGEID + ': ' + (etype == 'U' ? 'Unassigned break' : 'Non-overlapping break started shift') + ', ignoring: ' + JSON.stringify(LastPerson));
+						continue;
+					}
+					// Completely ignore Rest Breaks (RB). They ALWAYS overlap
+					// with other shifts and do not change scheduled hours
+					if (schedSym == "RB")
+						continue;
+
+					// only save this shift if it ends later than last
+					// AND it is not a break
+					if ((!LastShift || symshft.EndIdx > LastShift.EndIdx) &&
+						schedSym != "MB" && schedSym != "RB")
+						LastShift = symshft;
+
+					// if this is a break, we need to presevre array of measures
+					// that previous symbol incremented because we need to
+					// subtruct this break from them
+					// If this is non-break symbol, we start with empty array
+					if (schedSym != "MB" && schedSym != "RB")
+						measures = [];
+
+					let VarSym = SchedulingSymbols[schedSym].Variable;
+					// if this is a break and previous symbol was variable,
+					// record this is variable break
+					if (!RAW && LastVar && (schedSym == "MB" || schedSym == "RB")) {
+						measures.push(fieldmap[SchedulingSymbols[schedSym].R2D2.replace('Fixed','Variable')]);
+					}
+					else {
+						measures.push(RAW ? fieldmap[schedSym] : fieldmap[SchedulingSymbols[schedSym].R2D2]);
+						LastVar = VarSym;
+					}
+
+					// Breaks do NOT count.  Furthermore, Meal breaks reduce 
+					// scheduled hours and should be backed out from 
+					// whatever scheduled hours and symbol from
+					// previous shift that this break overlays
+					if (schedSym != "MB" && schedSym != "RB") {
+						if (etype == 'U') {
+							measures.push(fieldmap['Unassigned Time']);
+						}
+						else if (etype == 'C') {
+							measures.push(fieldmap['Scheduled Crew Hours']);
+							if (!VarSym) {
+								measures.push(fieldmap['Sched Fixed Crew Hours']);
+							}
+						}
+						else if (etype == 'M' || etype == 'DM') {
+							measures.push(fieldmap['Scheduled Manager Hours']);
+							if (!VarSym) {
+								measures.push(fieldmap['Sched Fix Mgr Hours']);
+							}
+							if (etype == 'DM') {
+								measures.push(fieldmap['Sched Department Manager Hours']);
+								if (!VarSym) {
+									measures.push(fieldmap['Sched Fix Department Mgr Hours']);
+								}
+							}
+						}
+					}
+					// now increment appropriate measures for each row
+					// that falls into this time period
+					for (let i=symshft.StartIdx; i<symshft.EndIdx; i++) {
+						for (let m of measures) {
+							// non-breaks always increment count
+							// breaks increment breaks count only
+							if ((schedSym != "MB" && schedSym != "RB") ||
+								m == fieldmap['Meal Break (Fixed) (/)'] ||
+								m == fieldmap['Meal Break (Variable) (/)']) {
+								rows[i][m]++;
+							}
+							else {
+								// breaks decrement any other measure
+								if (rows[i][m])
+									rows[i][m]--;
+							}
+						}
+					}
+				}
+				// Save new person (just reference,shallow copy)
+				LastPerson = person;
+			}
+			// we processed whole day - now write all 96 rows
+			for (let i=0; i<MaxIdx; i++) {
+				ws.write(rows[i].join(delim) + EOL);
+			}
+		}
+	}
+}
+
+var me = process.argv.shift();
+if (/node/.test(me)) {
+	me = process.argv.shift();
+}
+while (process.argv.length > 0) {
+	if (/^(-|\+)/.test(process.argv[0])) {
+		let arg = process.argv.shift();
+		switch (arg.substr(1)) {
+		case 'r':
+			RAW = true;
+			break;
+		default:
+			console.log('Invalid argument ' + arg);
+			process.exit(1);
+		}
+	} else {
+		break;
+	}
+}
+if (RAW) {
+	let last = 0;
+	for (let key in FMAP) {
+		if (FMAP.hasOwnProperty(key)) {
+			if (key.match(/\(.+\)/)) {
+				delete FMAP[key];
+			}
+			else {
+				if (FMAP[key] > last) last = FMAP[key];
+			}
+		}
+	}
+	for (let key in SchedulingSymbols) {
+		FMAP[key] = ++last;
+	}
+}
+
+for (let filein of process.argv) {
+	let li = filein.lastIndexOf(path.sep);
+	let fn = (li < 0) ? filein : filein.substring(li+1);
+	let fnseg = fn.split('_');
+	let nsn = null;
+	let topic = null;
+	if (fnseg.length < 7) {
+		console.log('FAILED: invalid/unsupported file name: ' + filein);
+	}
+	else {
+		nsn = fnseg[0].replace(/^0*/,'');
+		if (!nsn || isNaN(nsn)) {
+			console.log('FAILED: No NSN in file name: ' + filein);
+			nsn = null;
+		}
+		topic = fnseg[2].toUpperCase();
+		if (!topic || topic != 'ER-LSCHD-SCHEDULE') {
+			console.log('No or wrong topic in file name: ' + filein);
+			nsn = null;
+		}
+	}
+	if (!nsn)
+		continue;
+	let fileout = filein.replace(/.[^.]+$/,'.csv');
+	if (fileout == filein)
+		fileout = filein + '.csv';
+	
+	console.log(filein + ': Reading');
+	try {
+		var jdata = JSON.parse(fs.readFileSync(filein, 'utf8'));
+	}
+	catch (err) {
+		console.log('FAILED to read/parse JSON: ' + err);
+	}
+	if (jdata) {
+		let ws = fs.createWriteStream(fileout, { flags : 'w', mode : '0644' });
+		ws.on('error', function(err) {
+			console.log('Writing ' + fileout + ' FAILED: ' + err);
+		});
+		ws.write(Object.keys(FMAP).join(delim) + EOL);
+		parse_Schedule(nsn, jdata, FMAP, ws);
+	}
+}
