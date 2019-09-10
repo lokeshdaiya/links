@@ -558,13 +558,25 @@ function parse_Schedule(fnsn, jdata, map, ws) {
 	}
 }
 
+/**
+ * 
+ * while running script we will get some arguments
+ * 
+ */
 var me = process.argv.shift();
+// remove node argument means if script is run using below command
+// node test.js arg1 argg2
+// then remove node 
 if (/node/.test(me)) {
 	me = process.argv.shift();
 }
+// process this while block until you parse all the arguments
 while (process.argv.length > 0) {
+    // check if argument is starting with - or +
 	if (/^(-|\+)/.test(process.argv[0])) {
-		let arg = process.argv.shift();
+        // take argument
+        let arg = process.argv.shift();
+        // check if argument's first letter is r
 		switch (arg.substr(1)) {
 		case 'r':
 			RAW = true;
@@ -577,6 +589,7 @@ while (process.argv.length > 0) {
 		break;
 	}
 }
+// if argument's first letter is r 
 if (RAW) {
 	let last = 0;
 	for (let key in FMAP) {
@@ -595,11 +608,15 @@ if (RAW) {
 }
 
 for (let filein of process.argv) {
-	let li = filein.lastIndexOf(path.sep);
-	let fn = (li < 0) ? filein : filein.substring(li+1);
-	let fnseg = fn.split('_');
-	let nsn = null;
-	let topic = null;
+    // get indexof of the seperator \
+    let li = filein.lastIndexOf(path.sep);
+    // if no seperator found then take file name else extract file name from complete path.
+    let fn = (li < 0) ? filein : filein.substring(li+1);
+    let fnseg = fn.split('_');
+    let nsn = null;
+    let topic = null;
+    /** File Name Validations start here */
+    // file should have format like name1_name2_name3_name4_name5_name6_name7
 	if (fnseg.length < 7) {
 		console.log('FAILED: invalid/unsupported file name: ' + filein);
 	}
@@ -614,7 +631,12 @@ for (let filein of process.argv) {
 			console.log('No or wrong topic in file name: ' + filein);
 			nsn = null;
 		}
-	}
+    }
+    
+    /** File Name Validations end here */
+
+    /** Reading Phase  Starts*/
+
 	if (!nsn)
 		continue;
 	let fileout = filein.replace(/.[^.]+$/,'.csv');
@@ -627,7 +649,10 @@ for (let filein of process.argv) {
 	}
 	catch (err) {
 		console.log('FAILED to read/parse JSON: ' + err);
-	}
+    }
+    
+    /** Reading Phase Ends*/
+
 	if (jdata) {
 		let ws = fs.createWriteStream(fileout, { flags : 'w', mode : '0644' });
 		ws.on('error', function(err) {
@@ -637,3 +662,4 @@ for (let filein of process.argv) {
 		parse_Schedule(nsn, jdata, FMAP, ws);
 	}
 }
+
