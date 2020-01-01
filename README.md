@@ -1,5 +1,9 @@
 # links
 
+## Programs
+
+https://codereview.stackexchange.com/questions/174355/generate-every-possible-single-word-of-three-letters
+
 ## Closuers
 
 https://stackoverflow.com/questions/111102/how-do-javascript-closures-work?rq=1
