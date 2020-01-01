@@ -60,6 +60,8 @@ https://theinfogrid.com/tech/developers/angular/filter-angular-async-pipe/amp/
 
 https://medium.com/ableneo/how-to-pass-data-between-routed-components-in-angular-2306308d8255
 
+https://www.freecodecamp.org/news/48-answers-on-stack-overflow-to-the-most-popular-angular-questions-52f9eb430ab0/
+
 # Angular Elements
 https://medium.com/@sumeet.ru/how-to-create-custom-angular-element-a9e92dac2c13 
 https://blog.angulartraining.com/tutorial-how-to-create-custom-angular-elements-55aea29d80c5
