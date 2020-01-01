@@ -1,5 +1,8 @@
 # links
 
+## Javascript
+https://github.com/wesbos/es6.io 
+
 ## Programs
 
 https://codereview.stackexchange.com/questions/174355/generate-every-possible-single-word-of-three-letters
@@ -53,6 +56,8 @@ https://dormoshe.io/daily-news/the-magic-of-typescript-decorators-1449?utm_sourc
 https://github.com/basarat/typescript-collections/tree/release/examples
 
 https://theinfogrid.com/tech/developers/angular/filter-angular-async-pipe/amp/
+
+https://medium.com/ableneo/how-to-pass-data-between-routed-components-in-angular-2306308d8255
 
 # Angular Elements
 https://medium.com/@sumeet.ru/how-to-create-custom-angular-element-a9e92dac2c13 
