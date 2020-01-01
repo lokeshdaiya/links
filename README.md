@@ -2,6 +2,7 @@
 
 ## Javascript
 https://github.com/wesbos/es6.io 
+https://davidwalsh.name/javascript-debounce-function
 
 ## Programs
 
