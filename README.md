@@ -2,13 +2,16 @@
 
 ## Javascript
 https://github.com/wesbos/es6.io 
+
 https://davidwalsh.name/javascript-debounce-function
+
+https://blog.pramp.com/how-to-succeed-in-a-frontend-interview-d748cb073823
 
 ## Programs
 
 https://codereview.stackexchange.com/questions/174355/generate-every-possible-single-word-of-three-letters
 
-## Closuers
+## Closurs
 
 https://stackoverflow.com/questions/111102/how-do-javascript-closures-work?rq=1
 
