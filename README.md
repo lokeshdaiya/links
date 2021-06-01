@@ -7,6 +7,10 @@ https://davidwalsh.name/javascript-debounce-function
 
 https://blog.pramp.com/how-to-succeed-in-a-frontend-interview-d748cb073823
 
+https://riya-rj-jain.medium.com/cracking-frontend-developer-interview-part-2-fef60df3d919
+
+https://github.com/lydiahallie/javascript-questions
+
 ## Programs
 
 https://codereview.stackexchange.com/questions/174355/generate-every-possible-single-word-of-three-letters
